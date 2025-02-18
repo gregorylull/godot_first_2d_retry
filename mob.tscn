@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://bt4842crm38av"]
+
+[node name="Mob" type="RigidBody2D"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
