@@ -1,9 +1,52 @@
-[gd_scene load_steps=3 format=3 uid="uid://bpd0ryq2te03y"]
+[gd_scene load_steps=6 format=3 uid="uid://bpd0ryq2te03y"]
 
 [ext_resource type="PackedScene" uid="uid://dqti1tdift8ab" path="res://player.tscn" id="1_ewfwq"]
 [ext_resource type="Script" path="res://main.gd" id="1_xwvum"]
+[ext_resource type="PackedScene" uid="uid://bt4842crm38av" path="res://mob.tscn" id="2_1huss"]
+
+[sub_resource type="Curve2D" id="Curve2D_stkcj"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 536, 0, 0, 0, 0, 0, 544, 744, 0, 0, 0, 0, 0, 744, 0, 0, 0, 0, 0, 8)
+}
+point_count = 5
+
+[sub_resource type="GDScript" id="GDScript_2jjmf"]
+script/source = "extends Path2D
+
+@onready var path: PathFollow2D = $MobPathFollow
+@onready var sprite: Sprite2D = $MobPathFollow/Sprite2D
+
+@export var speed: float = 100.0
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass
+	
+	
+"
 
 [node name="Main" type="Node"]
 script = ExtResource("1_xwvum")
+Mob = ExtResource("2_1huss")
 
 [node name="Player" parent="." instance=ExtResource("1_ewfwq")]
+
+[node name="MobPath" type="Path2D" parent="."]
+curve = SubResource("Curve2D_stkcj")
+script = SubResource("GDScript_2jjmf")
+
+[node name="MobPathFollow" type="PathFollow2D" parent="MobPath"]
+position = Vector2(495.451, 0.60521)
+rotation = -0.0149243
+progress = 495.49
+
+[node name="MobTimer" type="Timer" parent="."]
+one_shot = true
+autostart = true
+
+[connection signal="timeout" from="MobTimer" to="." method="_on_mob_timer_timeout"]
