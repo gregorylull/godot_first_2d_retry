@@ -12,8 +12,10 @@ var health: int = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	health = HEALTH
-	
+	pass
+
+func set_health(h = 0):
+	health = h
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -45,19 +47,15 @@ func _process(delta: float) -> void:
 
 # when a Body2D enters my collision, in this case my enemy will be a body (not an area)
 func _on_body_entered(body: Node2D) -> void:
-	print("body entered:", body.name)
-	
 	# simple would be all enemies -1
 	health -= 1
-	damaged.emit({
-		"health": health
-	})
+	damaged.emit(health)
+	
+	print("current health: ", health, health == 0)
 	
 	if health == 0:
-		player_dead.emit({
-			"killedBy": body.name
-		})
-		
+		print("i am dead")
+		player_dead.emit()
 	
 	# TODO: use enemy types to damage, e.g. -1 vs -2 if enemy is red
 	

@@ -5,19 +5,22 @@ extends Node
 @onready var player: Area2D = $Player
 @onready var mobPath: Path2D = $MobPath
 @onready var mobPathFollow: PathFollow2D = $MobPath/MobPathFollow
+@onready var hud: CanvasLayer = $HUD
+
+const HEALTH = 3
+
+var score: int = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	print("project settings: gui/theme/custom_font: ", ProjectSettings.get_setting("gui/theme/custom_font"))
 	var viewport_dimensions = get_viewport().get_visible_rect()
 	var size = viewport_dimensions.size
 	
 	player.position = size / 2 
-	
-	print("viewport vec: ", viewport_dimensions.size)
 
 
-
+# dear gregoress, ur a qt3.14
+# your secret admirer
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -25,9 +28,7 @@ func _process(delta: float) -> void:
 
 
 func _on_mob_timer_timeout() -> void:
-	print('mob BEFORE instantiate')
 	var mob: RigidBody2D = Mob.instantiate()
-	print('mob AFTER instantiate')
 	
 	var progress_ratio = randf()
 	
@@ -39,9 +40,33 @@ func _on_mob_timer_timeout() -> void:
 	var randomRotation = randf_range(-PI/4, PI/4)
 	var rotation = direction + randomRotation
 		
-	print('mob BEFORE add_child')
 	add_child(mob)
 	var velocity = mob.linear_velocity
 	mob.rotation = rotation
 	mob.linear_velocity = velocity.rotated(rotation)
-	print('mob AFTER add_child')
+
+
+func _on_hud_start_game() -> void:
+	score = 0
+	hud.set_score(score)
+	$ScoreTimer.start()
+	player.health = HEALTH
+	
+	$MobTimer.start()
+	$BackgroundMusic.play()
+	$GameOverMusic.stop()
+
+
+func _on_score_timer_timeout() -> void:
+	score += 1
+	hud.set_score(score)
+
+
+func _on_player_player_dead() -> void:
+	print("player dead!!!")
+	$ScoreTimer.stop()
+	$MobTimer.stop()
+	$BackgroundMusic.stop()
+	$GameOverMusic.play()
+	
+	get_tree().call_group("mobs", "queue_free")

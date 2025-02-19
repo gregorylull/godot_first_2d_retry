@@ -1,8 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://bpd0ryq2te03y"]
+[gd_scene load_steps=8 format=3 uid="uid://bpd0ryq2te03y"]
 
 [ext_resource type="PackedScene" uid="uid://dqti1tdift8ab" path="res://player.tscn" id="1_ewfwq"]
 [ext_resource type="Script" path="res://main.gd" id="1_xwvum"]
 [ext_resource type="PackedScene" uid="uid://bt4842crm38av" path="res://mob.tscn" id="2_1huss"]
+[ext_resource type="PackedScene" uid="uid://cgsye84iiry2p" path="res://hud.tscn" id="4_jdylc"]
+[ext_resource type="AudioStream" uid="uid://b1urq11pharsg" path="res://art/House In a Forest Loop.ogg" id="5_38v4d"]
 
 [sub_resource type="Curve2D" id="Curve2D_stkcj"]
 _data = {
@@ -34,6 +36,14 @@ func _process(delta: float) -> void:
 script = ExtResource("1_xwvum")
 Mob = ExtResource("2_1huss")
 
+[node name="BackgroundColor" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.29362, 0.552623, 0.90072, 1)
+
 [node name="Player" parent="." instance=ExtResource("1_ewfwq")]
 
 [node name="MobPath" type="Path2D" parent="."]
@@ -46,7 +56,21 @@ rotation = -0.0149243
 progress = 495.49
 
 [node name="MobTimer" type="Timer" parent="."]
-one_shot = true
-autostart = true
+wait_time = 0.75
 
+[node name="HUD" parent="." instance=ExtResource("4_jdylc")]
+
+[node name="ScoreTimer" type="Timer" parent="."]
+
+[node name="BackgroundMusic" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("5_38v4d")
+autoplay = true
+
+[node name="GameOverMusic" type="AudioStreamPlayer2D" parent="."]
+
+[connection signal="damaged" from="Player" to="HUD" method="_on_player_damaged"]
+[connection signal="player_dead" from="Player" to="." method="_on_player_player_dead"]
+[connection signal="player_dead" from="Player" to="HUD" method="_on_player_player_dead"]
 [connection signal="timeout" from="MobTimer" to="." method="_on_mob_timer_timeout"]
+[connection signal="start_game" from="HUD" to="." method="_on_hud_start_game"]
+[connection signal="timeout" from="ScoreTimer" to="." method="_on_score_timer_timeout"]
